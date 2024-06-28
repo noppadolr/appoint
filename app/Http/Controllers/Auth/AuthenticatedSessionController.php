@@ -16,7 +16,7 @@ class AuthenticatedSessionController extends Controller
      */
     public function create(): View
     {
-        return view('auth.login');
+        return view('backend.login');
     }
 
     /**
@@ -27,8 +27,17 @@ class AuthenticatedSessionController extends Controller
         $request->authenticate();
 
         $request->session()->regenerate();
+        if(Auth()->user()->role == 2){
 
-        return redirect()->intended(route('dashboard', absolute: false));
+            return redirect()->intended(route('admin.dashboard', absolute: false));
+        }elseif(auth()->user()->role == 1){
+            return redirect()->intended(route('doctor.dashboard', absolute: false));
+        }elseif(auth()->user()->role == 0){
+            return redirect()->intended(route('patein.dashboard', absolute: false));
+        }else
+        { 
+            return redirect(route('user.login'));
+        }
     }
 
     /**
@@ -42,6 +51,6 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerateToken();
 
-        return redirect('/');
+        return redirect('user/login');
     }
 }
